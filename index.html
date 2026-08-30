@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
-<title>Find Me ♡</title>
+<title>Find Me ♡ · V18 Character</title>
 <style>
 html,body{margin:0;height:100%;overflow:hidden;overscroll-behavior:none;background:#0c1117;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;touch-action:none}canvas{display:block;width:100%;height:100%}
 #ui{position:fixed;inset:0;z-index:10;pointer-events:none}.glass{background:#071019cc;border:1px solid #ffffff1f;backdrop-filter:blur(9px);border-radius:14px}
@@ -161,35 +161,81 @@ function mat(c,rough=.75){return new THREE.MeshStandardMaterial({color:c,roughne
 function part(g,geo,m,x,y,z,rx=0,ry=0,rz=0){const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.rotation.set(rx,ry,rz);o.castShadow=true;o.receiveShadow=true;g.add(o);return o}
 function labelSprite(text){const c=document.createElement('canvas');c.width=256;c.height=64;const x=c.getContext('2d');x.clearRect(0,0,256,64);x.fillStyle='#071019cc';x.roundRect?.(4,8,248,48,18);x.fill();x.fillStyle='#fff';x.font='700 28px system-ui';x.textAlign='center';x.textBaseline='middle';x.fillText(text,128,32);const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:false}));sp.scale.set(1.8,.45,1);sp.position.y=2.5;return sp}
 function animeAvatar(kind='eren'){
-  const g=new THREE.Group(), skin=mat(kind==='eren'?0xd8aa88:0xe2b89a), dark=mat(kind==='eren'?0x211813:0x111215), shirt=mat(kind==='eren'?0xe7e1d2:0xe9e7e1), jacket=mat(kind==='eren'?0x425744:0x30343c), pants=mat(kind==='eren'?0x7b6c52:0x4b4c53), boot=mat(0x242424);
-  const hip=new THREE.Group();hip.position.y=.95;g.add(hip);
-  const torso=part(hip,new THREE.BoxGeometry(.62,.82,.34),shirt,0,.33,0);part(hip,new THREE.BoxGeometry(.69,.43,.39),jacket,0,.50,-.01);
-  const head=part(g,new THREE.SphereGeometry(.29,18,14),skin,0,1.82,0);
-  // anime hair cap + directional bangs/spikes
-  part(g,new THREE.SphereGeometry(.305,18,12,0,Math.PI*2,0,Math.PI*.62),dark,0,1.90,0);
-  const spikes=[];const spikeGeo=new THREE.ConeGeometry(.085,.34,5);
-  const coords=kind==='eren'?[[-.19,2.05,.02,-.15],[.0,2.09,.03,.08],[.19,2.04,.02,.22],[-.26,1.96,.02,-.55],[.27,1.97,.02,.55]]:[[-.21,2.02,.03,-.25],[-.06,2.08,.03,-.08],[.10,2.07,.03,.10],[.24,2.00,.03,.28]];
-  for(const [x,y,z,rz] of coords)spikes.push(part(g,spikeGeo,dark,x,y,z,0,0,rz));
-  if(kind==='mikasa'){
-    // bob-cut side panels + red scarf
-    part(g,new THREE.BoxGeometry(.10,.42,.33),dark,-.28,1.78,0);part(g,new THREE.BoxGeometry(.10,.42,.33),dark,.28,1.78,0);
-    part(g,new THREE.TorusGeometry(.27,.055,8,20),mat(0x8f1f27),0,1.49,0,Math.PI/2,0,0);part(g,new THREE.BoxGeometry(.11,.52,.08),mat(0x8f1f27),.18,1.29,.16,0,0,-.12);
+  const g=new THREE.Group();
+  const male=kind==='eren';
+  const skin=mat(male?0xd7a781:0xe6b493,.58), hair=mat(male?0x171312:0x101114,.64), eye=mat(male?0x355744:0x26262b,.34);
+  const jacket=mat(male?0x8b5b36:0x855433,.72), jacketDark=mat(0x58381f,.78), shirt=mat(male?0xd7d1c2:0xe5e1d7,.82), pants=mat(0x303036,.82), boot=mat(0x171719,.62), metal=mat(0x70757a,.42), belt=mat(0x3a271c,.66), scarf=mat(0x8b1f2b,.68);
+  g.scale.setScalar(.92);
+  const root=new THREE.Group(); g.add(root);
+  // hips / torso with tapered anime silhouette
+  const hips=part(root,new THREE.CapsuleGeometry(.22,.30,5,10),pants,0,.88,0); hips.scale.set(1.15,1,.80);
+  const torso=part(root,new THREE.CapsuleGeometry(.28,.56,6,12),shirt,0,1.34,0); torso.scale.set(1.03,1,.72);
+  const chest=part(root,new THREE.BoxGeometry(.66,.45,.30),jacket,0,1.48,.015); chest.scale.x=male?1.02:.92;
+  // jacket opening + collar + shoulder panels
+  part(root,new THREE.BoxGeometry(.055,.41,.325),jacketDark,0,1.47,-.015);
+  part(root,new THREE.BoxGeometry(.19,.11,.34),jacketDark,-.20,1.68,-.01,0,0,-.12); part(root,new THREE.BoxGeometry(.19,.11,.34),jacketDark,.20,1.68,-.01,0,0,.12);
+  // compact original wing-inspired emblem (not copied IP logo)
+  const emblem=mat(0xc9d0d3,.4); part(root,new THREE.BoxGeometry(.19,.22,.018),emblem,0,1.48,.171,0,0,0);
+  const slash=part(root,new THREE.BoxGeometry(.028,.22,.023),jacketDark,-.035,1.48,.184,0,0,.42); slash.castShadow=false;
+  // neck
+  part(root,new THREE.CylinderGeometry(.105,.115,.18,12),skin,0,1.83,0);
+  // anime head: lower face + cranium, slightly larger eyes region
+  const face=part(root,new THREE.SphereGeometry(.285,24,18),skin,0,2.08,-.012); face.scale.set(.88,1.02,.82);
+  const jaw=part(root,new THREE.ConeGeometry(.205,.34,16),skin,0,1.96,-.02,Math.PI,0,0); jaw.scale.z=.82;
+  // hair cap + layered side/back locks
+  const cap=part(root,new THREE.SphereGeometry(.304,24,16,0,Math.PI*2,0,Math.PI*.63),hair,0,2.17,.005); cap.scale.set(.97,1,.91);
+  const lockGeo=new THREE.ConeGeometry(.055,.34,7);
+  const locks=male?
+    [[-.24,2.18,-.03,-.55],[-.14,2.28,-.05,-.22],[-.02,2.31,-.06,.02],[.11,2.29,-.05,.20],[.23,2.21,-.03,.48],[-.28,2.06,.04,-.72],[.28,2.08,.04,.72]]:
+    [[-.24,2.18,-.04,-.42],[-.12,2.29,-.06,-.18],[.02,2.31,-.07,.02],[.14,2.28,-.06,.20],[.24,2.18,-.04,.42]];
+  for(const [x,y,z,rz] of locks)part(root,lockGeo,hair,x,y,z,0,0,rz);
+  if(male){
+    for(const [x,z,rz] of [[-.22,.08,.10],[-.08,.13,.03],[.08,.13,-.03],[.22,.08,-.10]])part(root,new THREE.ConeGeometry(.065,.30,7),hair,x,2.08,z,Math.PI*.08,0,rz);
   }else{
-    // longer rear hair pieces
-    part(g,new THREE.BoxGeometry(.13,.42,.13),dark,-.22,1.74,.15,0,0,.08);part(g,new THREE.BoxGeometry(.13,.42,.13),dark,.22,1.74,.15,0,0,-.08);
+    part(root,new THREE.BoxGeometry(.11,.48,.32),hair,-.25,2.02,.035,0,0,.05); part(root,new THREE.BoxGeometry(.11,.48,.32),hair,.25,2.02,.035,0,0,-.05);
+    part(root,new THREE.BoxGeometry(.47,.42,.13),hair,0,2.02,.20);
+    // scarf wrap + hanging tail
+    part(root,new THREE.TorusGeometry(.205,.055,9,24),scarf,0,1.79,0,Math.PI/2,0,0); part(root,new THREE.BoxGeometry(.10,.48,.06),scarf,.13,1.55,.17,0,0,-.12);
   }
-  // eyes
-  const eyeMat=mat(0x1b1a1a,.4);part(g,new THREE.BoxGeometry(.045,.028,.018),eyeMat,-.10,1.84,-.274);part(g,new THREE.BoxGeometry(.045,.028,.018),eyeMat,.10,1.84,-.274);
-  const armL=new THREE.Group(),armR=new THREE.Group();armL.position.set(-.40,1.30,0);armR.position.set(.40,1.30,0);g.add(armL,armR);
-  part(armL,new THREE.CapsuleGeometry(.09,.48,4,8),jacket,0,-.28,0);part(armR,new THREE.CapsuleGeometry(.09,.48,4,8),jacket,0,-.28,0);
-  const legL=new THREE.Group(),legR=new THREE.Group();legL.position.set(-.16,.76,0);legR.position.set(.16,.76,0);g.add(legL,legR);
-  part(legL,new THREE.CapsuleGeometry(.105,.55,4,8),pants,0,-.35,0);part(legR,new THREE.CapsuleGeometry(.105,.55,4,8),pants,0,-.35,0);part(legL,new THREE.BoxGeometry(.22,.16,.38),boot,0,-.72,-.07);part(legR,new THREE.BoxGeometry(.22,.16,.38),boot,0,-.72,-.07);
-  g.userData={armL,armR,legL,legR,baseY:0,kind,lastPos:new THREE.Vector3(),lastStep:0};
+  // eyes / brows / nose / mouth, intentionally original anime styling
+  for(const sx of [-1,1]){
+    const e=part(root,new THREE.SphereGeometry(.048,12,8),eye,sx*.095,2.10,-.235); e.scale.set(1.15,.62,.30); e.castShadow=false;
+    const white=part(root,new THREE.SphereGeometry(.017,8,6),mat(0xf4f4f0,.3),sx*.082,2.11,-.263); white.castShadow=false;
+    part(root,new THREE.BoxGeometry(.105,.018,.014),hair,sx*.095,2.18,-.236,0,0,sx*.07);
+  }
+  part(root,new THREE.BoxGeometry(.018,.045,.014),mat(0x9c6f5d,.55),0,2.035,-.259);
+  part(root,new THREE.BoxGeometry(.075,.012,.014),mat(0x7b4d45,.55),0,1.965,-.259);
+  // articulated arms, hands and sleeves
+  const armL=new THREE.Group(),armR=new THREE.Group(); armL.position.set(-.40,1.62,0); armR.position.set(.40,1.62,0); root.add(armL,armR);
+  const upperGeo=new THREE.CapsuleGeometry(.085,.36,5,10), lowerGeo=new THREE.CapsuleGeometry(.078,.34,5,10);
+  part(armL,upperGeo,jacket,0,-.22,0); part(armR,upperGeo,jacket,0,-.22,0);
+  part(armL,lowerGeo,jacketDark,0,-.58,0); part(armR,lowerGeo,jacketDark,0,-.58,0);
+  part(armL,new THREE.SphereGeometry(.09,12,9),skin,0,-.82,0); part(armR,new THREE.SphereGeometry(.09,12,9),skin,0,-.82,0);
+  // articulated legs + boots
+  const legL=new THREE.Group(),legR=new THREE.Group(); legL.position.set(-.16,.96,0); legR.position.set(.16,.96,0); root.add(legL,legR);
+  const thighGeo=new THREE.CapsuleGeometry(.105,.42,5,10), shinGeo=new THREE.CapsuleGeometry(.095,.38,5,10);
+  part(legL,thighGeo,pants,0,-.27,0); part(legR,thighGeo,pants,0,-.27,0);
+  part(legL,shinGeo,boot,0,-.68,0); part(legR,shinGeo,boot,0,-.68,0);
+  part(legL,new THREE.BoxGeometry(.22,.16,.36),boot,0,-.93,-.07); part(legR,new THREE.BoxGeometry(.22,.16,.36),boot,0,-.93,-.07);
+  // belts + harness details inspired by military anime, original geometry
+  part(root,new THREE.BoxGeometry(.58,.065,.32),belt,0,1.03,0);
+  for(const sx of [-1,1]){part(root,new THREE.BoxGeometry(.045,.52,.035),belt,sx*.22,1.20,.17,0,0,sx*.22);part(root,new THREE.BoxGeometry(.045,.48,.035),belt,sx*.15,.63,.13,0,0,-sx*.15)}
+  part(root,new THREE.BoxGeometry(.14,.10,.07),metal,0,1.03,-.18);
+  // small side gear boxes, reduced and stylized
+  if(male){part(root,new THREE.BoxGeometry(.20,.34,.18),metal,-.33,.77,.02,0,0,.04);part(root,new THREE.BoxGeometry(.20,.34,.18),metal,.33,.77,.02,0,0,-.04)}
+  g.userData={root,armL,armR,legL,legR,baseY:0,kind,lastPos:new THREE.Vector3(),lastStep:0,walkPhase:Math.random()*6.28};
   return g
 }
 const host=animeAvatar('eren'),guest=animeAvatar('mikasa');scene.add(host,guest);host.position.set(-1.2,0,8.0);guest.position.set(1.2,0,8.0);host.userData.lastPos.copy(host.position);guest.userData.lastPos.copy(guest.position);let local=host,remote=guest;
 const spotMarker=new THREE.Mesh(new THREE.RingGeometry(.42,.58,28),new THREE.MeshBasicMaterial({color:0xffe28a,transparent:true,opacity:.78,side:THREE.DoubleSide,depthWrite:false}));spotMarker.rotation.x=-Math.PI/2;spotMarker.position.y=.035;spotMarker.visible=false;scene.add(spotMarker);
-function animateAvatar(a,moving,t){if(!a?.userData?.armL)return;const swing=moving?Math.sin(t*.012)*.62:0;a.userData.armL.rotation.x+=(swing-a.userData.armL.rotation.x)*.22;a.userData.armR.rotation.x+=(-swing-a.userData.armR.rotation.x)*.22;a.userData.legL.rotation.x+=(-swing-a.userData.legL.rotation.x)*.22;a.userData.legR.rotation.x+=(swing-a.userData.legR.rotation.x)*.22}
+function animateAvatar(a,moving,t){
+  if(!a?.userData?.armL)return;
+  const u=a.userData, phase=t*.0105+u.walkPhase, amp=moving?.72:.06;
+  const swing=Math.sin(phase)*amp, counter=Math.sin(phase+Math.PI)*amp;
+  u.armL.rotation.x+=(counter*.75-u.armL.rotation.x)*.20;u.armR.rotation.x+=(swing*.75-u.armR.rotation.x)*.20;
+  u.legL.rotation.x+=(swing-u.legL.rotation.x)*.22;u.legR.rotation.x+=(counter-u.legR.rotation.x)*.22;
+  if(u.root){u.root.rotation.z+=(moving?Math.sin(phase*.5)*.018:0-u.root.rotation.z)*.12;u.root.position.y+=( (moving?Math.abs(Math.sin(phase))*.018:Math.sin(t*.002)*.006)-u.root.position.y)*.18}
+}
 function collides(x,z){const r=.34;if(x<-14.55||x>14.55||z<-19.75||z>15.75)return true;for(const b of coll){if(x+r>b.x-b.w/2&&x-r<b.x+b.w/2&&z+r>b.z-b.d/2&&z-r<b.z+b.d/2)return true}for(const q of doors){if(doorCollision(q,x,z,r))return true}return false}
 function nearestFree(x,z){if(!collides(x,z))return {x,z};for(let rad=.5;rad<=3;rad+=.5){for(let a=0;a<Math.PI*2;a+=Math.PI/6){const nx=x+Math.cos(a)*rad,nz=z+Math.sin(a)*rad;if(!collides(nx,nz))return {x:nx,z:nz}}}return {x:0,z:6}}
 function updateDoors(dt){
@@ -230,7 +276,8 @@ renderer.domElement.addEventListener('pointerdown',e=>{if(e.clientX<innerWidth*.
 $('#camMode').onclick=()=>{const h=room&&me===room.hider_id,hidden=room&&(isHost?room.host_hidden:room.guest_hidden);if(room?.status==='seeking'&&h&&hidden)return;mode=mode==='TPP'?'FPP':'TPP';$('#camMode').textContent=mode};
 function safeCamera(eye,desired){let best=eye.clone(),steps=14;for(let i=1;i<=steps;i++){const p=eye.clone().lerp(desired,i/steps);if(collides(p.x,p.z))break;best.copy(p)}return best}
 let fpsFrames=0,fpsAccum=0,qualityCool=0;function adaptQuality(dt){fpsFrames++;fpsAccum+=dt;qualityCool=Math.max(0,qualityCool-dt);if(fpsAccum<2.4||qualityCool>0)return;const fps=fpsFrames/fpsAccum;const cur=renderer.getPixelRatio();let next=cur;if(fps<42)next=Math.max(1,cur-.15);else if(fps>56)next=Math.min(Math.min(devicePixelRatio,1.6),cur+.10);if(Math.abs(next-cur)>.04){renderer.setPixelRatio(next);renderer.setSize(innerWidth,innerHeight,false);qualityCool=5}fpsFrames=0;fpsAccum=0}
-const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.033);adaptQuality(dt);moveX+=(targetX-moveX)*Math.min(1,dt*12);moveY+=(targetY-moveY)*Math.min(1,dt*12);const canMove=room&&room.status!=='finished'&&!(room.status==='hiding'&&me===room.seeker_id)&&!(room.status==='seeking'&&me===room.hider_id&&(isHost?room.host_hidden:room.guest_hidden));const mag=Math.hypot(moveX,moveY);const sprinting=canMove&&(runHeld||mag>.92)&&stamina>.08;stamina=Math.max(0,Math.min(1,stamina+(sprinting?-dt*.22:dt*.15)));$('#stamina').style.transform=`scaleX(${stamina})`;if(canMove){const f=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw)),r=new THREE.Vector3(-f.z,0,f.x),speed=crouched?1.75:(sprinting?5.0:3.6),delta=new THREE.Vector3().addScaledVector(f,moveY*speed*dt).addScaledVector(r,moveX*speed*dt);let nx=local.position.x+delta.x,nz=local.position.z+delta.z,moved=false;if(!collides(nx,local.position.z)){local.position.x=nx;moved=true}if(!collides(local.position.x,nz)){local.position.z=nz;moved=true}if(moved){lastSafe.copy(local.position);blockedFor=0}else if(mag>.25){blockedFor+=dt;if(blockedFor>1.1){const q=nearestFree(lastSafe.x,lastSafe.z);local.position.set(q.x,0,q.z);blockedFor=0;toast('Unstuck ✓',700)}}if(mag>.025)local.rotation.y=yaw;if(moved&&mag>.16&&performance.now()-lastFoot>(sprinting?250:390)){lastFoot=performance.now();footstep()}if(performance.now()-sendAt>90){sendAt=performance.now();update(isHost?{host_x:local.position.x,host_y:local.position.z}:{guest_x:local.position.x,guest_y:local.position.z}).catch(()=>{})}}jumpV-=9.2*dt;jumpY=Math.max(0,jumpY+jumpV*dt);if(jumpY===0&&jumpV<0)jumpV=0;updateDoors(dt);
+function lerpAngle(a,b,t){let d=((b-a+Math.PI)%(Math.PI*2))-Math.PI;if(d<-Math.PI)d+=Math.PI*2;return a+d*t}
+const clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.033);adaptQuality(dt);moveX+=(targetX-moveX)*Math.min(1,dt*12);moveY+=(targetY-moveY)*Math.min(1,dt*12);const canMove=room&&room.status!=='finished'&&!(room.status==='hiding'&&me===room.seeker_id)&&!(room.status==='seeking'&&me===room.hider_id&&(isHost?room.host_hidden:room.guest_hidden));const mag=Math.hypot(moveX,moveY);const sprinting=canMove&&(runHeld||mag>.92)&&stamina>.08;stamina=Math.max(0,Math.min(1,stamina+(sprinting?-dt*.22:dt*.15)));$('#stamina').style.transform=`scaleX(${stamina})`;if(canMove){const f=new THREE.Vector3(Math.sin(yaw),0,Math.cos(yaw)),r=new THREE.Vector3(-f.z,0,f.x),speed=crouched?1.75:(sprinting?5.0:3.6),delta=new THREE.Vector3().addScaledVector(f,moveY*speed*dt).addScaledVector(r,moveX*speed*dt);let nx=local.position.x+delta.x,nz=local.position.z+delta.z,moved=false;if(!collides(nx,local.position.z)){local.position.x=nx;moved=true}if(!collides(local.position.x,nz)){local.position.z=nz;moved=true}if(moved){lastSafe.copy(local.position);blockedFor=0}else if(mag>.25){blockedFor+=dt;if(blockedFor>1.1){const q=nearestFree(lastSafe.x,lastSafe.z);local.position.set(q.x,0,q.z);blockedFor=0;toast('Unstuck ✓',700)}}local.rotation.y=lerpAngle(local.rotation.y,yaw,Math.min(1,dt*9.5));if(moved&&mag>.16&&performance.now()-lastFoot>(sprinting?250:390)){lastFoot=performance.now();footstep()}if(performance.now()-sendAt>90){sendAt=performance.now();update(isHost?{host_x:local.position.x,host_y:local.position.z}:{guest_x:local.position.x,guest_y:local.position.z}).catch(()=>{})}}jumpV-=9.2*dt;jumpY=Math.max(0,jumpY+jumpV*dt);if(jumpY===0&&jumpV<0)jumpV=0;updateDoors(dt);
 const hiderNow=room&&me===room.hider_id,hiddenNow=room&&(isHost?room.host_hidden:room.guest_hidden),spectating=room?.status==='seeking'&&hiderNow&&hiddenNow;const near=nearestSpot(),now=performance.now();
 const act=$('#action'),prompt=$('#nearPrompt');act.style.visibility='visible';spotMarker.visible=false;if(near>=0&&((room?.status==='hiding'&&hiderNow)||(room?.status==='seeking'&&!hiderNow))){spotMarker.visible=true;spotMarker.position.x=spots[near].x;spotMarker.position.z=spots[near].z;spotMarker.material.opacity=.58+.20*Math.sin(now*.006)}
 if(room?.status==='hiding'&&hiderNow){act.textContent=near>=0?'HIDE':'HIDE';act.disabled=false;act.classList.toggle('unavailable',near<0);prompt.textContent=near>=0?'Hide spot: '+spots[near].name:'Move to a glowing hide marker';prompt.classList.add('show')}
